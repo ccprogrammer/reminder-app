@@ -1,20 +1,10 @@
 part of 'reminder_bloc.dart';
 
-abstract class ReminderState extends Equatable {
-  @override
-  List<Object> get props => [];
-}
+abstract class ReminderState {}
 
 class ReminderInitial extends ReminderState {}
-
-class ReminderLoading extends ReminderState {}
 
 class ReminderLoaded extends ReminderState {
   final List<Reminder> reminders;
   ReminderLoaded(this.reminders);
-
-  @override
-  List<Object> get props => [reminders];
 }
-
-class ReminderError extends ReminderState {}

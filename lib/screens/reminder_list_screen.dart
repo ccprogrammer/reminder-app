@@ -19,7 +19,6 @@ class ReminderListScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications),
-            tooltip: "Show Dummy Notification",
             onPressed: () async {
               await NotificationService.showDummyNotification();
             },
@@ -33,9 +32,12 @@ class ReminderListScreen extends StatelessWidget {
               itemCount: state.reminders.length,
               itemBuilder: (context, index) {
                 final r = state.reminders[index];
+
                 return ListTile(
                   title: Text(r.title),
-                  subtitle: Text(DateFormat.Hm().format(r.time)),
+                  subtitle: Text(
+                    "${DateFormat.Hm().format(r.time)} - ${r.recurrence.name}",
+                  ),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),
                     onPressed: () {
@@ -48,7 +50,8 @@ class ReminderListScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => AddEditScreen(reminder: r),
+                        builder: (_) =>
+                            AddEditScreen(reminder: r),
                       ),
                     );
                   },

@@ -1,9 +1,6 @@
 part of 'reminder_bloc.dart';
 
-abstract class ReminderEvent extends Equatable {
-  @override
-  List<Object> get props => [];
-}
+abstract class ReminderEvent {}
 
 class LoadReminders extends ReminderEvent {}
 

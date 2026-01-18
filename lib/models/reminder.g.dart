@@ -8,7 +8,7 @@ part of 'reminder.dart';
 
 class ReminderAdapter extends TypeAdapter<Reminder> {
   @override
-  final int typeId = 1;
+  final int typeId = 2;
 
   @override
   Reminder read(BinaryReader reader) {
@@ -20,19 +20,28 @@ class ReminderAdapter extends TypeAdapter<Reminder> {
       id: fields[0] as String,
       title: fields[1] as String,
       time: fields[2] as DateTime,
+      recurrence: fields[3] as RecurrenceType,
+      recurrenceWeekday: fields[4] as int?,
+      recurrenceDayOfMonth: fields[5] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Reminder obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.title)
       ..writeByte(2)
-      ..write(obj.time);
+      ..write(obj.time)
+      ..writeByte(3)
+      ..write(obj.recurrence)
+      ..writeByte(4)
+      ..write(obj.recurrenceWeekday)
+      ..writeByte(5)
+      ..write(obj.recurrenceDayOfMonth);
   }
 
   @override
@@ -42,6 +51,55 @@ class ReminderAdapter extends TypeAdapter<Reminder> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ReminderAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class RecurrenceTypeAdapter extends TypeAdapter<RecurrenceType> {
+  @override
+  final int typeId = 1;
+
+  @override
+  RecurrenceType read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return RecurrenceType.none;
+      case 1:
+        return RecurrenceType.daily;
+      case 2:
+        return RecurrenceType.weekly;
+      case 3:
+        return RecurrenceType.monthly;
+      default:
+        return RecurrenceType.none;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, RecurrenceType obj) {
+    switch (obj) {
+      case RecurrenceType.none:
+        writer.writeByte(0);
+        break;
+      case RecurrenceType.daily:
+        writer.writeByte(1);
+        break;
+      case RecurrenceType.weekly:
+        writer.writeByte(2);
+        break;
+      case RecurrenceType.monthly:
+        writer.writeByte(3);
+        break;
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RecurrenceTypeAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

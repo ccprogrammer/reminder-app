@@ -11,21 +11,31 @@ class AddEditScreen extends StatefulWidget {
   const AddEditScreen({super.key, this.reminder});
 
   @override
-  _AddEditScreenState createState() => _AddEditScreenState();
+  State<AddEditScreen> createState() => _AddEditScreenState();
 }
 
 class _AddEditScreenState extends State<AddEditScreen> {
   late TextEditingController controller;
-  DateTime selectedTime = DateTime.now();
+  late DateTime selectedTime;
+
+  RecurrenceType recurrence = RecurrenceType.none;
+  int? weekday;
+  int? dayOfMonth;
 
   @override
   void initState() {
     super.initState();
+
     controller =
         TextEditingController(text: widget.reminder?.title ?? "");
 
+    selectedTime =
+        widget.reminder?.time ?? DateTime.now();
+
     if (widget.reminder != null) {
-      selectedTime = widget.reminder!.time;
+      recurrence = widget.reminder!.recurrence;
+      weekday = widget.reminder!.recurrenceWeekday;
+      dayOfMonth = widget.reminder!.recurrenceDayOfMonth;
     }
   }
 
@@ -38,9 +48,9 @@ class _AddEditScreenState extends State<AddEditScreen> {
     if (time != null) {
       setState(() {
         selectedTime = DateTime(
-          DateTime.now().year,
-          DateTime.now().month,
-          DateTime.now().day,
+          2000,
+          1,
+          1,
           time.hour,
           time.minute,
         );
@@ -50,9 +60,12 @@ class _AddEditScreenState extends State<AddEditScreen> {
 
   void save() {
     final reminder = Reminder(
-      id: widget.reminder?.id ?? Uuid().v4(),
+      id: widget.reminder?.id ?? const Uuid().v4(),
       title: controller.text,
       time: selectedTime,
+      recurrence: recurrence,
+      recurrenceWeekday: weekday,
+      recurrenceDayOfMonth: dayOfMonth,
     );
 
     if (widget.reminder == null) {
@@ -75,22 +88,83 @@ class _AddEditScreenState extends State<AddEditScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
               controller: controller,
-              decoration: InputDecoration(labelText: "Title"),
+              decoration: const InputDecoration(labelText: "Title"),
             ),
-            SizedBox(height: 20),
+
+            const SizedBox(height: 20),
+
             TextButton(
               onPressed: pickTime,
               child: Text(
                 "Time: ${DateFormat.Hm().format(selectedTime)}",
               ),
             ),
-            SizedBox(height: 20),
+
+            const SizedBox(height: 20),
+
+            DropdownButton<RecurrenceType>(
+              value: recurrence,
+              items: RecurrenceType.values
+                  .map((e) => DropdownMenuItem(
+                        value: e,
+                        child: Text(e.name.toUpperCase()),
+                      ))
+                  .toList(),
+              onChanged: (v) {
+                setState(() {
+                  recurrence = v!;
+                });
+              },
+            ),
+
+            if (recurrence == RecurrenceType.weekly)
+              DropdownButton<int>(
+                value: weekday,
+                hint: const Text("Select Weekday"),
+                items: List.generate(
+                  7,
+                  (i) => DropdownMenuItem(
+                    value: i + 1,
+                    child: Text(
+                      DateFormat.E()
+                          .format(DateTime(2024, 1, i + 1)),
+                    ),
+                  ),
+                ),
+                onChanged: (v) {
+                  setState(() {
+                    weekday = v;
+                  });
+                },
+              ),
+
+            if (recurrence == RecurrenceType.monthly)
+              DropdownButton<int>(
+                value: dayOfMonth,
+                hint: const Text("Day of Month"),
+                items: List.generate(
+                  28,
+                  (i) => DropdownMenuItem(
+                    value: i + 1,
+                    child: Text("Day ${i + 1}"),
+                  ),
+                ),
+                onChanged: (v) {
+                  setState(() {
+                    dayOfMonth = v;
+                  });
+                },
+              ),
+
+            const SizedBox(height: 20),
+
             ElevatedButton(
               onPressed: save,
-              child: Text("Save"),
+              child: const Text("Save"),
             )
           ],
         ),
