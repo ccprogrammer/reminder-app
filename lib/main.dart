@@ -17,7 +17,7 @@ void main() async {
 
   Hive.registerAdapter(ReminderAdapter());
 
-  tz.initializeTimeZones(); // <---- ADD THIS
+  tz.initializeTimeZones();
 
   await NotificationService.init();
 
