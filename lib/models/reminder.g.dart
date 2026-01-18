@@ -8,7 +8,7 @@ part of 'reminder.dart';
 
 class ReminderAdapter extends TypeAdapter<Reminder> {
   @override
-  final int typeId = 2;
+  final int typeId = 1;
 
   @override
   Reminder read(BinaryReader reader) {
@@ -20,16 +20,15 @@ class ReminderAdapter extends TypeAdapter<Reminder> {
       id: fields[0] as String,
       title: fields[1] as String,
       time: fields[2] as DateTime,
-      recurrence: fields[3] as RecurrenceType,
-      note: fields[4] as String,
-      weekday: fields[5] as int?,
+      note: fields[3] as String,
+      recurrence: fields[4] as RecurrenceType,
     );
   }
 
   @override
   void write(BinaryWriter writer, Reminder obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -37,11 +36,9 @@ class ReminderAdapter extends TypeAdapter<Reminder> {
       ..writeByte(2)
       ..write(obj.time)
       ..writeByte(3)
-      ..write(obj.recurrence)
-      ..writeByte(4)
       ..write(obj.note)
-      ..writeByte(5)
-      ..write(obj.weekday);
+      ..writeByte(4)
+      ..write(obj.recurrence);
   }
 
   @override
@@ -57,7 +54,7 @@ class ReminderAdapter extends TypeAdapter<Reminder> {
 
 class RecurrenceTypeAdapter extends TypeAdapter<RecurrenceType> {
   @override
-  final int typeId = 1;
+  final int typeId = 2;
 
   @override
   RecurrenceType read(BinaryReader reader) {
@@ -68,8 +65,6 @@ class RecurrenceTypeAdapter extends TypeAdapter<RecurrenceType> {
         return RecurrenceType.daily;
       case 2:
         return RecurrenceType.weekly;
-      case 3:
-        return RecurrenceType.monthly;
       default:
         return RecurrenceType.none;
     }
@@ -86,9 +81,6 @@ class RecurrenceTypeAdapter extends TypeAdapter<RecurrenceType> {
         break;
       case RecurrenceType.weekly:
         writer.writeByte(2);
-        break;
-      case RecurrenceType.monthly:
-        writer.writeByte(3);
         break;
     }
   }

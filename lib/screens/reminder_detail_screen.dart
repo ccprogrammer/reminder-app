@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+
+import '../bloc/reminder_bloc.dart';
 import '../models/reminder.dart';
+import 'add_edit_screen.dart';
 
 class ReminderDetailScreen extends StatelessWidget {
   final Reminder reminder;
@@ -10,53 +14,72 @@ class ReminderDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Reminder Detail"),
+        actions: [
+          // EDIT BUTTON
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AddEditScreen(reminder: reminder),
+                ),
+              );
+            },
+          ),
+
+          // 🔥 DELETE BUTTON IN DETAIL SCREEN
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: () {
+              context
+                  .read<ReminderBloc>()
+                  .add(DeleteReminder(reminder.id));
+
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 60),
-
-            Text(
-              DateFormat.Hm().format(reminder.time),
-              style: const TextStyle(fontSize: 72, fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: 20),
-
             Text(
               reminder.title,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
+
+            Text(
+              "Time: ${DateFormat.Hm().format(reminder.time)}",
+              style: const TextStyle(fontSize: 16),
+            ),
+
+            const SizedBox(height: 16),
 
             if (reminder.note.isNotEmpty)
-              Text(
-                reminder.note,
-                style: const TextStyle(fontSize: 16, color: Colors.grey),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Note:",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(reminder.note),
+                ],
               ),
-
-            const Spacer(),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(16),
-                  backgroundColor: const Color(0xFF7C3AED),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  "Close",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
           ],
         ),
       ),

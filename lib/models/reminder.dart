@@ -3,21 +3,6 @@ import 'package:hive/hive.dart';
 part 'reminder.g.dart';
 
 @HiveType(typeId: 1)
-enum RecurrenceType {
-  @HiveField(0)
-  none,
-
-  @HiveField(1)
-  daily,
-
-  @HiveField(2)
-  weekly,
-
-  @HiveField(3)
-  monthly
-}
-
-@HiveType(typeId: 2)
 class Reminder extends HiveObject {
   @HiveField(0)
   String id;
@@ -29,21 +14,28 @@ class Reminder extends HiveObject {
   DateTime time;
 
   @HiveField(3)
-  RecurrenceType recurrence;
-
-  @HiveField(4)
   String note;
 
-  @HiveField(5)
-  int? weekday; 
-  // 1 = Monday, 7 = Sunday (only used if weekly + day based)
+  @HiveField(4)
+  RecurrenceType recurrence;
 
   Reminder({
     required this.id,
     required this.title,
     required this.time,
-    this.recurrence = RecurrenceType.none,
-    this.note = "",
-    this.weekday,
+    required this.note,
+    required this.recurrence,
   });
+}
+
+@HiveType(typeId: 2)
+enum RecurrenceType {
+  @HiveField(0)
+  none,
+
+  @HiveField(1)
+  daily,
+
+  @HiveField(2)
+  weekly,
 }

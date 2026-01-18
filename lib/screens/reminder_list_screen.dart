@@ -20,6 +20,7 @@ class ReminderListScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications),
+            tooltip: "Test Notification",
             onPressed: () {
               NotificationService.showDummyNotification();
             },
@@ -36,53 +37,26 @@ class ReminderListScreen extends StatelessWidget {
             }
 
             return ListView.builder(
-              padding: const EdgeInsets.all(16),
               itemCount: state.reminders.length,
               itemBuilder: (context, index) {
-                final r = state.reminders[index];
+                final reminder = state.reminders[index];
 
                 return Card(
-                  margin: const EdgeInsets.only(bottom: 16),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   child: ListTile(
-                    contentPadding: const EdgeInsets.all(16),
-
-                    title: Text(
-                      r.title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    title: Text(reminder.title),
+                    subtitle: Text(
+                      DateFormat.Hm().format(reminder.time),
                     ),
 
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 6),
-                        Text(
-                          DateFormat.Hm().format(r.time),
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        if (r.note.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 6),
-                            child: Text(
-                              r.note,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-
+                    // 🔥 DELETE BUTTON ON TILE
                     trailing: IconButton(
-                      icon: const Icon(Icons.delete_outline),
+                      icon: const Icon(Icons.delete, color: Colors.red),
                       onPressed: () {
                         context
                             .read<ReminderBloc>()
-                            .add(DeleteReminder(r.id));
+                            .add(DeleteReminder(reminder.id));
                       },
                     ),
 
@@ -91,7 +65,7 @@ class ReminderListScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (_) =>
-                              ReminderDetailScreen(reminder: r),
+                              ReminderDetailScreen(reminder: reminder),
                         ),
                       );
                     },
@@ -104,13 +78,14 @@ class ReminderListScreen extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         },
       ),
+
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => AddEditScreen(),
+              builder: (_) => const AddEditScreen(),
             ),
           );
         },

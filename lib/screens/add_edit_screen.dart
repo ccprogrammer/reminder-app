@@ -21,7 +21,6 @@ class _AddEditScreenState extends State<AddEditScreen> {
 
   DateTime selectedTime = DateTime.now();
   RecurrenceType recurrence = RecurrenceType.none;
-  int? selectedWeekday;
 
   @override
   void initState() {
@@ -36,7 +35,6 @@ class _AddEditScreenState extends State<AddEditScreen> {
     if (widget.reminder != null) {
       selectedTime = widget.reminder!.time;
       recurrence = widget.reminder!.recurrence;
-      selectedWeekday = widget.reminder!.weekday;
     }
   }
 
@@ -60,173 +58,82 @@ class _AddEditScreenState extends State<AddEditScreen> {
   }
 
   void save() {
-    if (titleController.text.trim().isEmpty) return;
+    final isEditing = widget.reminder != null;
 
     final reminder = Reminder(
-      id: widget.reminder?.id ?? const Uuid().v4(),
+      id: isEditing ? widget.reminder!.id : const Uuid().v4(),
       title: titleController.text,
       note: noteController.text,
       time: selectedTime,
       recurrence: recurrence,
-      weekday: recurrence == RecurrenceType.weekly
-          ? selectedWeekday
-          : null,
     );
 
-    if (widget.reminder == null) {
-      context.read<ReminderBloc>().add(AddReminder(reminder));
-    } else {
+    if (isEditing) {
       context.read<ReminderBloc>().add(UpdateReminder(reminder));
+    } else {
+      context.read<ReminderBloc>().add(AddReminder(reminder));
     }
 
     Navigator.pop(context);
   }
 
-  Widget buildRecurrenceSelector() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Recurrence",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        DropdownButtonFormField<RecurrenceType>(
-          initialValue: recurrence,
-          items: RecurrenceType.values.map((e) {
-            return DropdownMenuItem(
-              value: e,
-              child: Text(e.name.toUpperCase()),
-            );
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              recurrence = value!;
-            });
-          },
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildWeekdaySelector() {
-    if (recurrence != RecurrenceType.weekly) {
-      return const SizedBox();
-    }
-
-    const days = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday"
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 16),
-        const Text(
-          "Select Day",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        DropdownButtonFormField<int>(
-          initialValue: selectedWeekday,
-          items: List.generate(7, (index) {
-            return DropdownMenuItem(
-              value: index + 1,
-              child: Text(days[index]),
-            );
-          }),
-          onChanged: (value) {
-            setState(() {
-              selectedWeekday = value;
-            });
-          },
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final isEdit = widget.reminder != null;
+    final isEditing = widget.reminder != null;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEdit ? "Edit Reminder" : "New Reminder"),
+        title: Text(isEditing ? "Edit Reminder" : "Add Reminder"),
       ),
-      body: SingleChildScrollView(
+      body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
               controller: titleController,
-              decoration: const InputDecoration(
-                labelText: "Title",
-                border: OutlineInputBorder(),
-              ),
+              decoration: const InputDecoration(labelText: "Title"),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
 
             TextField(
               controller: noteController,
+              decoration: const InputDecoration(labelText: "Note"),
               maxLines: 3,
-              decoration: const InputDecoration(
-                labelText: "Note",
-                border: OutlineInputBorder(),
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            const Text(
-              "Time",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: 8),
-
-            OutlinedButton.icon(
-              icon: const Icon(Icons.access_time),
-              label: Text(
-                DateFormat.Hm().format(selectedTime),
-                style: const TextStyle(fontSize: 16),
-              ),
-              onPressed: pickTime,
             ),
 
             const SizedBox(height: 20),
 
-            buildRecurrenceSelector(),
-
-            buildWeekdaySelector(),
-
-            const SizedBox(height: 30),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: save,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                child: const Text(
-                  "Save Reminder",
-                  style: TextStyle(fontSize: 16),
-                ),
+            TextButton(
+              onPressed: pickTime,
+              child: Text(
+                "Time: ${DateFormat.Hm().format(selectedTime)}",
               ),
+            ),
+
+            const SizedBox(height: 10),
+
+            DropdownButton<RecurrenceType>(
+              value: recurrence,
+              items: RecurrenceType.values.map((type) {
+                return DropdownMenuItem(
+                  value: type,
+                  child: Text(type.name),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  recurrence = value!;
+                });
+              },
+            ),
+
+            const SizedBox(height: 20),
+
+            ElevatedButton(
+              onPressed: save,
+              child: Text(isEditing ? "Update Reminder" : "Save Reminder"),
             )
           ],
         ),
