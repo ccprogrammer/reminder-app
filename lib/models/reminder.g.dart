@@ -21,8 +21,8 @@ class ReminderAdapter extends TypeAdapter<Reminder> {
       title: fields[1] as String,
       time: fields[2] as DateTime,
       recurrence: fields[3] as RecurrenceType,
-      recurrenceWeekday: fields[4] as int?,
-      recurrenceDayOfMonth: fields[5] as int?,
+      note: fields[4] as String,
+      weekday: fields[5] as int?,
     );
   }
 
@@ -39,9 +39,9 @@ class ReminderAdapter extends TypeAdapter<Reminder> {
       ..writeByte(3)
       ..write(obj.recurrence)
       ..writeByte(4)
-      ..write(obj.recurrenceWeekday)
+      ..write(obj.note)
       ..writeByte(5)
-      ..write(obj.recurrenceDayOfMonth);
+      ..write(obj.weekday);
   }
 
   @override

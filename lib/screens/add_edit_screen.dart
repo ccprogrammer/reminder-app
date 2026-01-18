@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/reminder_bloc.dart';
-import '../models/reminder.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+
+import '../bloc/reminder_bloc.dart';
+import '../models/reminder.dart';
 
 class AddEditScreen extends StatefulWidget {
   final Reminder? reminder;
@@ -15,27 +16,27 @@ class AddEditScreen extends StatefulWidget {
 }
 
 class _AddEditScreenState extends State<AddEditScreen> {
-  late TextEditingController controller;
-  late DateTime selectedTime;
+  late TextEditingController titleController;
+  late TextEditingController noteController;
 
+  DateTime selectedTime = DateTime.now();
   RecurrenceType recurrence = RecurrenceType.none;
-  int? weekday;
-  int? dayOfMonth;
+  int? selectedWeekday;
 
   @override
   void initState() {
     super.initState();
 
-    controller =
+    titleController =
         TextEditingController(text: widget.reminder?.title ?? "");
 
-    selectedTime =
-        widget.reminder?.time ?? DateTime.now();
+    noteController =
+        TextEditingController(text: widget.reminder?.note ?? "");
 
     if (widget.reminder != null) {
+      selectedTime = widget.reminder!.time;
       recurrence = widget.reminder!.recurrence;
-      weekday = widget.reminder!.recurrenceWeekday;
-      dayOfMonth = widget.reminder!.recurrenceDayOfMonth;
+      selectedWeekday = widget.reminder!.weekday;
     }
   }
 
@@ -48,9 +49,9 @@ class _AddEditScreenState extends State<AddEditScreen> {
     if (time != null) {
       setState(() {
         selectedTime = DateTime(
-          2000,
-          1,
-          1,
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
           time.hour,
           time.minute,
         );
@@ -59,13 +60,17 @@ class _AddEditScreenState extends State<AddEditScreen> {
   }
 
   void save() {
+    if (titleController.text.trim().isEmpty) return;
+
     final reminder = Reminder(
       id: widget.reminder?.id ?? const Uuid().v4(),
-      title: controller.text,
+      title: titleController.text,
+      note: noteController.text,
       time: selectedTime,
       recurrence: recurrence,
-      recurrenceWeekday: weekday,
-      recurrenceDayOfMonth: dayOfMonth,
+      weekday: recurrence == RecurrenceType.weekly
+          ? selectedWeekday
+          : null,
     );
 
     if (widget.reminder == null) {
@@ -77,94 +82,151 @@ class _AddEditScreenState extends State<AddEditScreen> {
     Navigator.pop(context);
   }
 
+  Widget buildRecurrenceSelector() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Recurrence",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<RecurrenceType>(
+          initialValue: recurrence,
+          items: RecurrenceType.values.map((e) {
+            return DropdownMenuItem(
+              value: e,
+              child: Text(e.name.toUpperCase()),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() {
+              recurrence = value!;
+            });
+          },
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildWeekdaySelector() {
+    if (recurrence != RecurrenceType.weekly) {
+      return const SizedBox();
+    }
+
+    const days = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        const Text(
+          "Select Day",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<int>(
+          initialValue: selectedWeekday,
+          items: List.generate(7, (index) {
+            return DropdownMenuItem(
+              value: index + 1,
+              child: Text(days[index]),
+            );
+          }),
+          onChanged: (value) {
+            setState(() {
+              selectedWeekday = value;
+            });
+          },
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isEdit = widget.reminder != null;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.reminder == null
-            ? "Add Reminder"
-            : "Edit Reminder"),
+        title: Text(isEdit ? "Edit Reminder" : "New Reminder"),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
-              controller: controller,
-              decoration: const InputDecoration(labelText: "Title"),
+              controller: titleController,
+              decoration: const InputDecoration(
+                labelText: "Title",
+                border: OutlineInputBorder(),
+              ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
-            TextButton(
+            TextField(
+              controller: noteController,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                labelText: "Note",
+                border: OutlineInputBorder(),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            const Text(
+              "Time",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 8),
+
+            OutlinedButton.icon(
+              icon: const Icon(Icons.access_time),
+              label: Text(
+                DateFormat.Hm().format(selectedTime),
+                style: const TextStyle(fontSize: 16),
+              ),
               onPressed: pickTime,
-              child: Text(
-                "Time: ${DateFormat.Hm().format(selectedTime)}",
-              ),
             ),
 
             const SizedBox(height: 20),
 
-            DropdownButton<RecurrenceType>(
-              value: recurrence,
-              items: RecurrenceType.values
-                  .map((e) => DropdownMenuItem(
-                        value: e,
-                        child: Text(e.name.toUpperCase()),
-                      ))
-                  .toList(),
-              onChanged: (v) {
-                setState(() {
-                  recurrence = v!;
-                });
-              },
-            ),
+            buildRecurrenceSelector(),
 
-            if (recurrence == RecurrenceType.weekly)
-              DropdownButton<int>(
-                value: weekday,
-                hint: const Text("Select Weekday"),
-                items: List.generate(
-                  7,
-                  (i) => DropdownMenuItem(
-                    value: i + 1,
-                    child: Text(
-                      DateFormat.E()
-                          .format(DateTime(2024, 1, i + 1)),
-                    ),
-                  ),
+            buildWeekdaySelector(),
+
+            const SizedBox(height: 30),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: save,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                onChanged: (v) {
-                  setState(() {
-                    weekday = v;
-                  });
-                },
-              ),
-
-            if (recurrence == RecurrenceType.monthly)
-              DropdownButton<int>(
-                value: dayOfMonth,
-                hint: const Text("Day of Month"),
-                items: List.generate(
-                  28,
-                  (i) => DropdownMenuItem(
-                    value: i + 1,
-                    child: Text("Day ${i + 1}"),
-                  ),
+                child: const Text(
+                  "Save Reminder",
+                  style: TextStyle(fontSize: 16),
                 ),
-                onChanged: (v) {
-                  setState(() {
-                    dayOfMonth = v;
-                  });
-                },
               ),
-
-            const SizedBox(height: 20),
-
-            ElevatedButton(
-              onPressed: save,
-              child: const Text("Save"),
             )
           ],
         ),

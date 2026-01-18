@@ -14,7 +14,7 @@ enum RecurrenceType {
   weekly,
 
   @HiveField(3)
-  monthly,
+  monthly
 }
 
 @HiveType(typeId: 2)
@@ -25,7 +25,6 @@ class Reminder extends HiveObject {
   @HiveField(1)
   String title;
 
-  // NOW STORES ONLY TIME PART
   @HiveField(2)
   DateTime time;
 
@@ -33,17 +32,18 @@ class Reminder extends HiveObject {
   RecurrenceType recurrence;
 
   @HiveField(4)
-  int? recurrenceWeekday;
+  String note;
 
   @HiveField(5)
-  int? recurrenceDayOfMonth;
+  int? weekday; 
+  // 1 = Monday, 7 = Sunday (only used if weekly + day based)
 
   Reminder({
     required this.id,
     required this.title,
     required this.time,
     this.recurrence = RecurrenceType.none,
-    this.recurrenceWeekday,
-    this.recurrenceDayOfMonth,
+    this.note = "",
+    this.weekday,
   });
 }

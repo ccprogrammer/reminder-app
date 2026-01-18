@@ -1,116 +1,132 @@
-import 'dart:developer';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter/material.dart';
 import '../models/reminder.dart';
 
 class NotificationService {
   static Future<void> init() async {
-    await AwesomeNotifications().initialize(
-      null,
-      [
-        NotificationChannel(
-          channelKey: 'reminder_channel',
-          channelName: 'Reminders',
-          channelDescription: 'Reminder notifications',
-          importance: NotificationImportance.Max,
-        ),
-      ],
-    );
+    await AwesomeNotifications().initialize(null, [
+      NotificationChannel(
+        channelKey: 'reminder_channel',
+        channelName: 'Reminders',
+        channelDescription: 'Notification channel for reminders',
+        importance: NotificationImportance.Max,
+        defaultColor: const Color(0xFF9D50DD),
+        ledColor: const Color(0xFF9D50DD),
+      ),
+    ]);
 
-    await AwesomeNotifications()
-        .isNotificationAllowed()
-        .then((isAllowed) {
-      if (!isAllowed) {
-        AwesomeNotifications()
-            .requestPermissionToSendNotifications();
+    await AwesomeNotifications().isNotificationAllowed().then((allowed) {
+      if (!allowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
       }
     });
   }
 
   static Future<void> scheduleNotification(Reminder reminder) async {
-    log("Scheduling notification: ${reminder.title}");
+    await cancelNotification(reminder.id.hashCode);
 
-    final now = DateTime.now();
+    NotificationCalendar schedule;
 
-    DateTime baseTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      reminder.time.hour,
-      reminder.time.minute,
-    );
-
-    if (baseTime.isBefore(now)) {
-      baseTime = baseTime.add(const Duration(days: 1));
-    }
-
-    NotificationSchedule? schedule;
+    final time = reminder.time;
 
     switch (reminder.recurrence) {
-      case RecurrenceType.none:
-        schedule = NotificationCalendar.fromDate(date: baseTime);
-        break;
-
       case RecurrenceType.daily:
         schedule = NotificationCalendar(
-          hour: reminder.time.hour,
-          minute: reminder.time.minute,
+          hour: time.hour,
+          minute: time.minute,
           second: 0,
+          millisecond: 0,
           repeats: true,
         );
         break;
 
       case RecurrenceType.weekly:
         schedule = NotificationCalendar(
-          hour: reminder.time.hour,
-          minute: reminder.time.minute,
-          weekday: reminder.recurrenceWeekday,
+          weekday: reminder.weekday,
+          hour: time.hour,
+          minute: time.minute,
           second: 0,
+          millisecond: 0,
           repeats: true,
         );
         break;
 
       case RecurrenceType.monthly:
         schedule = NotificationCalendar(
-          hour: reminder.time.hour,
-          minute: reminder.time.minute,
-          day: reminder.recurrenceDayOfMonth,
+          day: time.day,
+          hour: time.hour,
+          minute: time.minute,
           second: 0,
+          millisecond: 0,
           repeats: true,
         );
         break;
+
+      default:
+        schedule = NotificationCalendar(
+          hour: time.hour,
+          minute: time.minute,
+          second: 0,
+          millisecond: 0,
+          repeats: false,
+        );
     }
 
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: reminder.id.hashCode,
         channelKey: 'reminder_channel',
-        title: "Reminder",
-        body: reminder.title,
+        title: reminder.title,
+        body: reminder.note.isNotEmpty ? reminder.note : "It's time!",
         notificationLayout: NotificationLayout.Default,
+        payload: {
+          "id": reminder.id,
+          "title": reminder.title,
+          "note": reminder.note,
+        },
       ),
       schedule: schedule,
     );
-
-    log("Notification scheduled successfully");
   }
 
-  static Future<void> cancelNotification(String id) async {
-    await AwesomeNotifications().cancel(id.hashCode);
+  static Future<void> cancelNotification(int id) async {
+    await AwesomeNotifications().cancel(id);
+  }
+
+  static Future<void> cancelAll() async {
+    await AwesomeNotifications().cancelAll();
   }
 
   static Future<void> showDummyNotification() async {
-    log("Showing dummy notification");
-
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
-        id: 0,
+        id: DateTime.now().millisecondsSinceEpoch.remainder(100000),
         channelKey: 'reminder_channel',
         title: "Test Notification",
-        body: "This is a dummy notification",
-        notificationLayout: NotificationLayout.Default,
+        body: "This is a test reminder notification",
       ),
     );
+  }
 
-    log("Dummy notification shown");
+  static Future<void> listenForActions(
+    Function(Reminder) onReminderTapped,
+  ) async {
+    AwesomeNotifications().setListeners(
+      onActionReceivedMethod: (receivedAction) async {
+        final payload = receivedAction.payload;
+
+        if (payload != null) {
+          final reminder = Reminder(
+            id: payload["id"] ?? "",
+            title: payload["title"] ?? "",
+            note: payload["note"] ?? "",
+            time: DateTime.now(),
+            recurrence: RecurrenceType.none,
+          );
+
+          onReminderTapped(reminder);
+        }
+      },
+    );
   }
 }
