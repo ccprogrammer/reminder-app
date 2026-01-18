@@ -4,6 +4,8 @@ import '../bloc/reminder_bloc.dart';
 import 'add_edit_screen.dart';
 import 'package:intl/intl.dart';
 
+import '../services/notification_service.dart';
+
 class ReminderListScreen extends StatelessWidget {
   const ReminderListScreen({super.key});
 
@@ -12,7 +14,18 @@ class ReminderListScreen extends StatelessWidget {
     context.read<ReminderBloc>().add(LoadReminders());
 
     return Scaffold(
-      appBar: AppBar(title: Text("Reminders")),
+      appBar: AppBar(
+        title: const Text("Reminders"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            tooltip: "Show Dummy Notification",
+            onPressed: () async {
+              await NotificationService.showDummyNotification();
+            },
+          )
+        ],
+      ),
       body: BlocBuilder<ReminderBloc, ReminderState>(
         builder: (context, state) {
           if (state is ReminderLoaded) {
@@ -22,10 +35,9 @@ class ReminderListScreen extends StatelessWidget {
                 final r = state.reminders[index];
                 return ListTile(
                   title: Text(r.title),
-                  subtitle:
-                      Text(DateFormat.Hm().format(r.time)),
+                  subtitle: Text(DateFormat.Hm().format(r.time)),
                   trailing: IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: const Icon(Icons.delete),
                     onPressed: () {
                       context
                           .read<ReminderBloc>()
@@ -36,8 +48,7 @@ class ReminderListScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) =>
-                            AddEditScreen(reminder: r),
+                        builder: (_) => AddEditScreen(reminder: r),
                       ),
                     );
                   },
@@ -45,11 +56,11 @@ class ReminderListScreen extends StatelessWidget {
               },
             );
           }
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         },
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         onPressed: () {
           Navigator.push(
             context,

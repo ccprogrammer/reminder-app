@@ -14,6 +14,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Hive.initFlutter();
+
   Hive.registerAdapter(ReminderAdapter());
 
   tz.initializeTimeZones(); // <---- ADD THIS
