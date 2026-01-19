@@ -51,7 +51,9 @@ Make sure you have the following installed:
 2. Install dependencies:
      flutter pub get
 
-3. Run the app:
+3. Generate the db model: dart run build_runner build --delete-conflicting-outputs
+
+4. Run the app:
      flutter run
 
 
@@ -63,6 +65,7 @@ Make sure you have the following installed:
 |-------|---------|
 | flutter_bloc | State management using BLoC pattern |
 | awesome_notifications | Scheduling and handling local notifications |
+| hive | Lightweight local database for storing reminders |
 | intl | Date and time formatting |
 | cupertino_icons | iOS style icons |
 
