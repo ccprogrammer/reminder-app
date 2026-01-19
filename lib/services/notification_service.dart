@@ -37,7 +37,7 @@ class NotificationService {
 
       case RecurrenceType.weekly:
         schedule = NotificationCalendar(
-          weekday: time.weekday, // Monday = 1, Sunday = 7
+          weekday: time.weekday,
           hour: time.hour,
           minute: time.minute,
           second: 0,
