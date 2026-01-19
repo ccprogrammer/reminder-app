@@ -2,13 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminder_app/screens/add_edit_screen.dart';
-import 'package:reminder_app/widgets/header.dart';
+import 'package:reminder_app/widgets/app_header.dart';
 import 'package:reminder_app/widgets/search_bar_widget.dart';
 import 'package:reminder_app/widgets/tile_wrapper.dart';
 import '../bloc/reminder_bloc.dart';
 
-class ReminderListScreen extends StatelessWidget {
-  const ReminderListScreen({super.key});
+class TasksScreen extends StatelessWidget {
+  const TasksScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,18 +18,14 @@ class ReminderListScreen extends StatelessWidget {
       backgroundColor: Color(0xffFFFAF1),
 
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: const [
-              AppHeader(),
-              SizedBox(height: 16),
-              SearchBarWidget(),
-              TileWrapper(),
-            ],
-          ),
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
+          children: const [
+            AppHeader(),
+            SizedBox(height: 16),
+            SearchBarWidget(),
+            TileWrapper(),
+          ],
         ),
       ),
 

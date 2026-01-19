@@ -5,8 +5,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'models/reminder.dart';
 import 'repository/reminder_repository.dart';
 import 'bloc/reminder_bloc.dart';
-import 'screens/reminder_list_screen.dart';
-import 'screens/reminder_detail_screen.dart';
+import 'screens/tasks_screen.dart';
+import 'screens/task_detail_screen.dart';
 import 'services/notification_service.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
     NotificationService.listenForActions((reminder) {
       navigatorKey.currentState?.push(
         MaterialPageRoute(
-          builder: (_) => ReminderDetailScreen(reminder: reminder),
+          builder: (_) => TaskDetailScreen(reminder: reminder),
         ),
       );
     });
@@ -54,8 +54,7 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
-        home: const ReminderListScreen(),
-        // home: const ExampleUIScreen(),
+        home: const TasksScreen(),
       ),
     );
   }

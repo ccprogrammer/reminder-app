@@ -7,10 +7,10 @@ import '../bloc/reminder_bloc.dart';
 import '../models/reminder.dart';
 import 'add_edit_screen.dart';
 
-class ReminderDetailScreen extends StatelessWidget {
+class TaskDetailScreen extends StatelessWidget {
   final Reminder reminder;
 
-  const ReminderDetailScreen({super.key, required this.reminder});
+  const TaskDetailScreen({super.key, required this.reminder});
 
   @override
   Widget build(BuildContext context) {
