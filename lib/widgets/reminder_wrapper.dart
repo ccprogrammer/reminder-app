@@ -13,11 +13,14 @@ class ReminderWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ReminderBloc, ReminderState>(
       builder: (context, state) {
-        final reminders = state is ReminderLoaded
-            ? state.reminders
-            : state is ReminderFiltered
-                ? state.reminders
-                : [];
+        final reminders =
+            (state is ReminderLoaded
+                    ? state.reminders
+                    : state is ReminderFiltered
+                    ? state.reminders
+                    : [])
+                .toList()
+              ..sort((a, b) => a.time.compareTo(b.time));
 
         if (reminders.isEmpty) {
           return const SizedBox.shrink();
@@ -39,9 +42,9 @@ class ReminderWrapper extends StatelessWidget {
                 return ReminderTile(
                   reminder: reminder,
                   onDeleteTap: () {
-                    context
-                        .read<ReminderBloc>()
-                        .add(DeleteReminder(reminder.id));
+                    context.read<ReminderBloc>().add(
+                      DeleteReminder(reminder.id),
+                    );
                   },
                   onTap: () {
                     Navigator.push(
