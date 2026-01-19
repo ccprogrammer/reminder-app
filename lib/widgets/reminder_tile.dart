@@ -5,13 +5,13 @@ import 'package:intl/intl.dart';
 import 'package:reminder_app/extensions/string_extension.dart';
 import 'package:reminder_app/models/reminder.dart';
 
-class CardTile extends StatelessWidget {
+class ReminderTile extends StatelessWidget {
   final Reminder reminder;
   final VoidCallback onTap;
   final VoidCallback onDeleteTap;
 
 
-  const CardTile({
+  const ReminderTile({
     super.key,
     required this.reminder,
     required this.onTap,

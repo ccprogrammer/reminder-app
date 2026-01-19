@@ -3,11 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/reminder_bloc.dart';
 import '../screens/reminder_detail_screen.dart';
-import '../widgets/card_tile.dart';
+import 'reminder_tile.dart';
 import '../widgets/section_title.dart';
 
-class TileWrapper extends StatelessWidget {
-  const TileWrapper({super.key});
+class ReminderWrapper extends StatelessWidget {
+  const ReminderWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class TileWrapper extends StatelessWidget {
               itemBuilder: (context, index) {
                 final reminder = reminders[index];
 
-                return CardTile(
+                return ReminderTile(
                   reminder: reminder,
                   onDeleteTap: () {
                     context

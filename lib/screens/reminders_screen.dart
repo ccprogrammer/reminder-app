@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminder_app/screens/add_edit_screen.dart';
 import 'package:reminder_app/widgets/app_header.dart';
 import 'package:reminder_app/widgets/search_bar_widget.dart';
-import 'package:reminder_app/widgets/tile_wrapper.dart';
+import 'package:reminder_app/widgets/reminder_wrapper.dart';
 import '../bloc/reminder_bloc.dart';
 
 class RemindersScreen extends StatelessWidget {
@@ -24,7 +24,7 @@ class RemindersScreen extends StatelessWidget {
             AppHeader(),
             SizedBox(height: 16),
             SearchBarWidget(),
-            TileWrapper(),
+            ReminderWrapper(),
           ],
         ),
       ),
