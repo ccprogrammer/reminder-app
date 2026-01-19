@@ -40,7 +40,6 @@ class ReminderDetailScreen extends StatelessWidget {
             },
           ),
 
-          // 🔥 DELETE BUTTON IN DETAIL SCREEN
           IconButton(
             icon: const Icon(Icons.delete, color: Colors.red),
             onPressed: () {
