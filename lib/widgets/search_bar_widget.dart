@@ -14,6 +14,10 @@ class SearchBarWidget extends StatelessWidget {
         filled: true,
         isDense: true,
         fillColor: Colors.white,
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(999),
+          borderSide: BorderSide(width: 2, color: Colors.black),
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(999),
           borderSide: BorderSide(width: 2, color: Colors.black),
