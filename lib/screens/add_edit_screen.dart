@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reminder_app/screens/task_detail_screen.dart';
+import 'package:reminder_app/screens/reminder_detail_screen.dart';
 import 'package:reminder_app/widgets/header_add_edit.dart';
 import 'package:reminder_app/widgets/input_fields.dart';
 import 'package:reminder_app/widgets/recurrence_selection.dart';
@@ -59,7 +59,7 @@ class _AddEditScreenState extends State<AddEditScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => TaskDetailScreen(reminder: reminder),
+          builder: (context) => ReminderDetailScreen(reminder: reminder),
         ),
       );
     } else {

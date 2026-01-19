@@ -7,8 +7,8 @@ import 'package:reminder_app/widgets/search_bar_widget.dart';
 import 'package:reminder_app/widgets/tile_wrapper.dart';
 import '../bloc/reminder_bloc.dart';
 
-class TasksScreen extends StatelessWidget {
-  const TasksScreen({super.key});
+class RemindersScreen extends StatelessWidget {
+  const RemindersScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

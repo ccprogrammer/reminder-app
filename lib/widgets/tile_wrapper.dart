@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/reminder_bloc.dart';
-import '../screens/task_detail_screen.dart';
+import '../screens/reminder_detail_screen.dart';
 import '../widgets/card_tile.dart';
 import '../widgets/section_title.dart';
 
@@ -48,7 +48,7 @@ class TileWrapper extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (_) =>
-                            TaskDetailScreen(reminder: reminder),
+                            ReminderDetailScreen(reminder: reminder),
                       ),
                     );
                   },
