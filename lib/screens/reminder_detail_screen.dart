@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:reminder_app/extensions/string_extension.dart';
 
 import '../bloc/reminder_bloc.dart';
 import '../models/reminder.dart';
@@ -63,11 +64,16 @@ class ReminderDetailScreen extends StatelessWidget {
             Row(
               children: [
                 Icon(CupertinoIcons.time),
-                const SizedBox(width: 10),
+                const SizedBox(width: 6),
                 Text(
                   DateFormat.Hm().format(reminder.time),
                   style: const TextStyle(fontSize: 16),
                 ),
+                if (reminder.recurrence != RecurrenceType.none)
+                  Text(
+                    ' - ${reminder.recurrence.name.capitalize()}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
               ],
             ),
             const SizedBox(height: 16),

@@ -23,7 +23,10 @@ class NotificationService {
 
     switch (reminder.recurrence) {
       case RecurrenceType.none:
-        schedule = NotificationCalendar.fromDate(date: time, repeats: false);
+        schedule = NotificationCalendar.fromDate(
+          date: time,
+          repeats: false,
+        );
         break;
 
       case RecurrenceType.daily:
@@ -72,14 +75,23 @@ class NotificationService {
         id: reminder.id.hashCode,
         channelKey: 'reminder_channel',
         title: reminder.title,
-        body: reminder.note.isNotEmpty ? reminder.note : "Reminder time!",
+        body: reminder.note.isNotEmpty
+            ? reminder.note
+            : "Reminder time!",
         payload: {
           "id": reminder.id,
           "title": reminder.title,
           "note": reminder.note,
+          "time": reminder.time.toIso8601String(),
+          "recurrence": reminder.recurrence.name,
         },
       ),
-      actionButtons: [NotificationActionButton(key: "OPEN", label: "Open")],
+      actionButtons: [
+        NotificationActionButton(
+          key: "OPEN",
+          label: "Open",
+        ),
+      ],
       schedule: schedule,
     );
   }
@@ -99,9 +111,13 @@ class NotificationService {
           "id": "dummy",
           "title": "Test Reminder",
           "note": "This is a dummy notification",
+          "time": DateTime.now().toIso8601String(),
+          "recurrence": RecurrenceType.none.name,
         },
       ),
-      actionButtons: [NotificationActionButton(key: "OPEN", label: "Open")],
+      actionButtons: [
+        NotificationActionButton(key: "OPEN", label: "Open")
+      ],
     );
   }
 
@@ -113,12 +129,32 @@ class NotificationService {
         final payload = receivedAction.payload;
 
         if (payload != null) {
+          final String id = payload["id"] ?? "";
+          final String title = payload["title"] ?? "";
+          final String note = payload["note"] ?? "";
+
+          final String? timeString = payload["time"];
+          final DateTime time = timeString != null
+              ? DateTime.parse(timeString)
+              : DateTime.now();
+
+          final String? recurrenceString = payload["recurrence"];
+
+          RecurrenceType recurrence = RecurrenceType.none;
+
+          if (recurrenceString != null) {
+            recurrence = RecurrenceType.values.firstWhere(
+              (e) => e.name == recurrenceString,
+              orElse: () => RecurrenceType.none,
+            );
+          }
+
           final reminder = Reminder(
-            id: payload["id"] ?? "",
-            title: payload["title"] ?? "",
-            note: payload["note"] ?? "",
-            time: DateTime.now(),
-            recurrence: RecurrenceType.none,
+            id: id,
+            title: title,
+            note: note,
+            time: time,
+            recurrence: recurrence,
           );
 
           onReminderTapped(reminder);

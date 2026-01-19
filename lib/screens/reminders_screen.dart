@@ -19,7 +19,7 @@ class RemindersScreen extends StatelessWidget {
 
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
           children: const [
             AppHeader(),
             SizedBox(height: 16),
