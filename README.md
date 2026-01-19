@@ -14,6 +14,22 @@ A simple Flutter reminder application that allows users to create, edit, delete,
 - Clean UI with BLoC state management  
 
 ---
+## Screens
+
+<table style="border-collapse: collapse; border: none;">
+  <tr style="border: none;">
+    <td style="border: none;"><img width="250" src="https://github.com/user-attachments/assets/cd972629-ff01-4ab9-938d-3136d17553d2" /></td>
+    <td style="border: none;"><img width="250" src="https://github.com/user-attachments/assets/3eb63553-cb32-4f74-b4f1-78bde07ec05b" /></td>
+    <td style="border: none;"><img width="250" src="https://github.com/user-attachments/assets/85231440-6ef4-4ca8-99b4-76ce8d537940" /></td>
+    <td style="border: none;"><img width="250" src="https://github.com/user-attachments/assets/1925df97-a03a-463a-929d-593dedc2c89e" /></td>   
+  </tr>
+  <tr style="border: none;">    
+    <td style="border: none;"><img width="250" src="https://github.com/user-attachments/assets/c1a7c8cc-905d-43af-bba6-d1638a55ddbe" /></td>
+    <td style="border: none;"><img width="250" src="https://github.com/user-attachments/assets/99eeb7e3-2149-4217-a42f-cb738cb5de2a" /></td>
+  </tr>
+</table>
+
+---
 
 ## Setup Instructions
 
