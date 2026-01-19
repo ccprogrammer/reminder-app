@@ -23,7 +23,8 @@ A simple Flutter reminder application that allows users to create, edit, delete,
     <td style="border: none;"><img width="250" src="https://github.com/user-attachments/assets/85231440-6ef4-4ca8-99b4-76ce8d537940" /></td>
     <td style="border: none;"><img width="250" src="https://github.com/user-attachments/assets/1925df97-a03a-463a-929d-593dedc2c89e" /></td>   
   </tr>
-  <tr style="border: none;">    
+  <tr style="border: none;">
+    <td style="border: none;"><img width="250" src="https://github.com/user-attachments/assets/bc3e515d-03d1-4e0c-8f9b-37b6afa0c15f" /></td>
     <td style="border: none;"><img width="250" src="https://github.com/user-attachments/assets/c1a7c8cc-905d-43af-bba6-d1638a55ddbe" /></td>
     <td style="border: none;"><img width="250" src="https://github.com/user-attachments/assets/99eeb7e3-2149-4217-a42f-cb738cb5de2a" /></td>
   </tr>
