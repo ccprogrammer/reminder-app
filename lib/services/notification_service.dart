@@ -4,47 +4,83 @@ import '../models/reminder.dart';
 
 class NotificationService {
   static Future<void> init() async {
-    await AwesomeNotifications().initialize(
-      null,
-      [
-        NotificationChannel(
-          channelKey: 'reminder_channel',
-          channelName: 'Reminders',
-          channelDescription: 'Reminder notifications',
-          importance: NotificationImportance.Max,
-        )
-      ],
-    );
+    await AwesomeNotifications().initialize(null, [
+      NotificationChannel(
+        channelKey: 'reminder_channel',
+        channelName: 'Reminders',
+        channelDescription: 'Reminder notifications',
+        importance: NotificationImportance.Max,
+      ),
+    ]);
 
     await AwesomeNotifications().requestPermissionToSendNotifications();
   }
 
   static Future<void> scheduleNotification(Reminder reminder) async {
+    NotificationSchedule? schedule;
+
+    final time = reminder.time;
+
+    switch (reminder.recurrence) {
+      case RecurrenceType.none:
+        schedule = NotificationCalendar.fromDate(date: time, repeats: false);
+        break;
+
+      case RecurrenceType.daily:
+        schedule = NotificationCalendar(
+          hour: time.hour,
+          minute: time.minute,
+          second: 0,
+          repeats: true,
+        );
+        break;
+
+      case RecurrenceType.weekly:
+        schedule = NotificationCalendar(
+          weekday: time.weekday, // Monday = 1, Sunday = 7
+          hour: time.hour,
+          minute: time.minute,
+          second: 0,
+          repeats: true,
+        );
+        break;
+
+      case RecurrenceType.monthly:
+        schedule = NotificationCalendar(
+          day: time.day,
+          hour: time.hour,
+          minute: time.minute,
+          second: 0,
+          repeats: true,
+        );
+        break;
+
+      case RecurrenceType.yearly:
+        schedule = NotificationCalendar(
+          month: time.month,
+          day: time.day,
+          hour: time.hour,
+          minute: time.minute,
+          second: 0,
+          repeats: true,
+        );
+        break;
+    }
 
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: reminder.id.hashCode,
         channelKey: 'reminder_channel',
         title: reminder.title,
-        body: reminder.note.isNotEmpty
-            ? reminder.note
-            : "Reminder time!",
+        body: reminder.note.isNotEmpty ? reminder.note : "Reminder time!",
         payload: {
           "id": reminder.id,
           "title": reminder.title,
           "note": reminder.note,
         },
       ),
-      actionButtons: [
-        NotificationActionButton(
-          key: "OPEN",
-          label: "Open",
-        ),
-      ],
-      schedule: NotificationCalendar.fromDate(
-        date: reminder.time,
-        repeats: reminder.recurrence != RecurrenceType.none,
-      ),
+      actionButtons: [NotificationActionButton(key: "OPEN", label: "Open")],
+      schedule: schedule,
     );
   }
 
@@ -65,12 +101,7 @@ class NotificationService {
           "note": "This is a dummy notification",
         },
       ),
-      actionButtons: [
-        NotificationActionButton(
-          key: "OPEN",
-          label: "Open",
-        ),
-      ],
+      actionButtons: [NotificationActionButton(key: "OPEN", label: "Open")],
     );
   }
 
