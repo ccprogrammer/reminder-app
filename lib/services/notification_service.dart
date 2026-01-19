@@ -1,5 +1,4 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'dart:developer';
 
 import '../models/reminder.dart';
 
@@ -21,7 +20,6 @@ class NotificationService {
   }
 
   static Future<void> scheduleNotification(Reminder reminder) async {
-    log("Scheduling notification for: ${reminder.title}");
 
     await AwesomeNotifications().createNotification(
       content: NotificationContent(

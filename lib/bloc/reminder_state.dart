@@ -10,3 +10,10 @@ class ReminderLoaded extends ReminderState {
 
   ReminderLoaded(this.reminders);
 }
+
+class ReminderFiltered extends ReminderState {
+  final List<Reminder> reminders;
+  final String query;
+
+  ReminderFiltered(this.reminders, this.query);
+}

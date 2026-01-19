@@ -18,3 +18,8 @@ class DeleteReminder extends ReminderEvent {
   final String id;
   DeleteReminder(this.id);
 }
+
+class SearchReminders extends ReminderEvent {
+  final String query;
+  SearchReminders(this.query);
+}

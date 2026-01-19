@@ -40,6 +40,55 @@ class AppHeader extends StatelessWidget {
                 ),
               );
             }
+
+            if (state is ReminderFiltered) {
+              if (state.reminders.isEmpty) {
+                return Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Task not ',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'found',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              final reminders = state.reminders;
+
+              return Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '${reminders.length} Tasks ',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'today',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
             return Text.rich(
               TextSpan(
                 children: [
