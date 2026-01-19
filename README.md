@@ -1,69 +1,150 @@
 # Reminder App
 
-A simple Flutter reminder application that allows users to create tasks and receive scheduled notifications with different recurrence options.
+A simple Flutter reminder application that allows users to create, edit, delete, search, and receive scheduled notifications for tasks.
 
 ---
 
 ## Features
 
-- Create reminders with title, note, and time  
-- View list of today's tasks  
-- Delete reminders  
-- Open reminder details  
-- Local notifications using **Awesome Notifications**  
-- Recurring reminders:
-  - One-time  
-  - Daily  
-  - Weekly  
-  - Monthly  
-  - Yearly  
+- Create, update, and delete reminders  
+- Schedule local notifications  
+- Support for recurrence (daily, weekly, monthly, yearly)  
+- Search reminders by title or note  
+- Open reminder detail directly from notification  
+- Clean UI with BLoC state management  
 
 ---
 
-## Tech Stack
+## Setup Instructions
 
-- **Flutter**
-- **Bloc State Management**
-- **Awesome Notifications**
-- Clean UI with reusable widgets
+### Prerequisites
+
+Make sure you have the following installed:
+
+- Flutter SDK (latest stable)
+- Android Studio / VS Code
+- Android Emulator or Physical Device
+
+### Installation
+
+1. Clone the repository:
+     git clone <repository_url>
+     cd reminder_app
+
+2. Install dependencies:
+     flutter pub get
+
+3. Run the app:
+     flutter run
+
 
 ---
 
-## Notification Scheduling Logic
+## Dependencies / Plugins Used
 
-Notifications are scheduled using `AwesomeNotifications` with proper recurrence mapping.
+| Package | Purpose |
+|-------|---------|
+| flutter_bloc | State management using BLoC pattern |
+| awesome_notifications | Scheduling and handling local notifications |
+| intl | Date and time formatting |
+| cupertino_icons | iOS style icons |
 
-Each recurrence type is converted to a specific `NotificationCalendar` configuration:
+All dependencies are defined in pubspec.yaml.
 
-| Recurrence Type | Behavior |
-|----------------|---------|
-| none | Trigger once at selected time |
-| daily | Repeat every day at the same hour and minute |
-| weekly | Repeat every week on the same weekday |
-| monthly | Repeat every month on the same day |
-| yearly | Repeat every year on the same month and day |
+---
 
-Example scheduling implementation:
+## Architectural Notes
 
-```dart
-switch (reminder.recurrence) {
-  case RecurrenceType.daily:
-    NotificationCalendar(
-      hour: time.hour,
-      minute: time.minute,
-      repeats: true,
-    );
-    break;
+This app follows a clean BLoC Architecture with clear separation of concerns.
 
-  case RecurrenceType.weekly:
-    NotificationCalendar(
-      weekday: time.weekday,
-      hour: time.hour,
-      minute: time.minute,
-      repeats: true,
-    );
-    break;
+### Core Structure
 
-  // etc...
-}
 ```
+lib/
+├── bloc/
+│ ├── reminder_bloc.dart
+│ ├── reminder_event.dart
+│ └── reminder_state.dart
+├── models/
+│ └── reminder.dart
+├── repository/
+│ └── reminder_repository.dart
+├── services/
+│ └── notification_service.dart
+├── screens/
+│ ├── add_edit_screen.dart
+│ ├── reminder_detail_screen.dart
+│ └── home_screen.dart
+└── widgets/
+```
+
+
+### BLoC Structure
+
+- UI dispatches events such as:
+  - LoadReminders
+  - AddReminder
+  - UpdateReminder
+  - DeleteReminder
+  - SearchReminder
+
+- ReminderBloc processes events and emits states:
+  - ReminderInitial
+  - ReminderLoaded
+  - ReminderFiltered
+
+- Repository handles data operations  
+- NotificationService manages scheduling and opening reminders  
+
+This structure keeps the code modular, testable, and easy to maintain.
+
+---
+
+## Assumptions / Limitations
+
+- Reminders are stored locally (no backend or database)
+- Notifications rely on device local time
+- Recurring reminders only support simple patterns
+- Search is basic (title and note matching only)
+- No cloud sync or multi-device support
+
+---
+
+## Bonus Features
+
+- Tap notification to open reminder detail screen  
+- Live search filtering using BLoC  
+- Editable reminders  
+- Delete directly from list or detail screen  
+- Sorted reminders by time  
+- Clean modern UI  
+
+---
+
+## How Recurrence Works
+
+Recurrence types supported:
+
+- none  
+- daily  
+- weekly  
+- monthly  
+- yearly  
+
+The app schedules notifications using AwesomeNotifications with proper calendar rules based on the selected recurrence type.
+
+---
+
+## Notes
+
+This project demonstrates:
+
+- Proper use of BLoC state management  
+- Local notification scheduling  
+- Modular Flutter architecture  
+- Clean UI implementation  
+
+---
+Made by ccprogrammer.
+
+
