@@ -65,6 +65,10 @@ class RecurrenceTypeAdapter extends TypeAdapter<RecurrenceType> {
         return RecurrenceType.daily;
       case 2:
         return RecurrenceType.weekly;
+      case 3:
+        return RecurrenceType.monthly;
+      case 4:
+        return RecurrenceType.yearly;
       default:
         return RecurrenceType.none;
     }
@@ -81,6 +85,12 @@ class RecurrenceTypeAdapter extends TypeAdapter<RecurrenceType> {
         break;
       case RecurrenceType.weekly:
         writer.writeByte(2);
+        break;
+      case RecurrenceType.monthly:
+        writer.writeByte(3);
+        break;
+      case RecurrenceType.yearly:
+        writer.writeByte(4);
         break;
     }
   }

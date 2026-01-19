@@ -38,4 +38,10 @@ enum RecurrenceType {
 
   @HiveField(2)
   weekly,
+
+  @HiveField(3)
+  monthly,
+
+  @HiveField(4)
+  yearly
 }
