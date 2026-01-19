@@ -14,7 +14,7 @@ class AppHeaderAddEdit extends StatelessWidget {
             style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
           ),
           TextSpan(
-            text: 'Reminder',
+            text: 'Task',
             style: TextStyle(fontSize: 32, fontWeight: FontWeight.w500),
           ),
         ],
